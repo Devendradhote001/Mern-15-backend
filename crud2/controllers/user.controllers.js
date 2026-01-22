@@ -1,4 +1,5 @@
 const UserModel = require("../models/user.model");
+const bcrypt = require("bcrypt");
 
 const registerController = async (req, res) => {
   try {
@@ -9,10 +10,12 @@ const registerController = async (req, res) => {
         message: "All fields are required",
       });
 
+    let hassPass = await bcrypt.hash(password, 10);
+
     let newUser = await UserModel.create({
       username,
       email,
-      password,
+      password: hassPass,
       mobile,
     });
 
