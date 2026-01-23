@@ -1,5 +1,6 @@
 const UserModel = require("../models/user.model");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 const registerController = async (req, res) => {
   try {
@@ -23,6 +24,12 @@ const registerController = async (req, res) => {
       return res.status(400).json({
         message: "Something went wrong",
       });
+
+    let token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
+
+    res.cookie("token", token);
 
     return res.status(201).json({
       success: true,
