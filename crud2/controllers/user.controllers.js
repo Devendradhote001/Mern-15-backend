@@ -1,49 +1,4 @@
 const UserModel = require("../models/user.model");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-
-const registerController = async (req, res) => {
-  try {
-    let { username, email, password, mobile } = req.body;
-
-    if (!username || !email || !password || !mobile)
-      return res.status(400).json({
-        message: "All fields are required",
-      });
-
-    let hassPass = await bcrypt.hash(password, 10);
-
-    let newUser = await UserModel.create({
-      username,
-      email,
-      password: hassPass,
-      mobile,
-    });
-
-    if (!newUser)
-      return res.status(400).json({
-        message: "Something went wrong",
-      });
-
-    let token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
-    });
-
-    res.cookie("token", token);
-
-    return res.status(201).json({
-      success: true,
-      message: "User registered successfully",
-      user: newUser,
-    });
-  } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: "Internal server error",
-      error,
-    });
-  }
-};
 
 const getAllUserController = async (req, res) => {
   try {
@@ -163,7 +118,6 @@ const deleteUserController = async (req, res) => {
 };
 
 module.exports = {
-  registerController,
   getAllUserController,
   getSingleUserController,
   updateUserController,

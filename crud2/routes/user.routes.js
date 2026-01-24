@@ -9,7 +9,7 @@ const {
 
 const router = express.Router();
 
-router.post("/register", registerController);
+
 router.get("/", getAllUserController);
 router.get("/:id", getSingleUserController);
 router.put("/update/:id", updateUserController);
