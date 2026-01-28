@@ -4,7 +4,6 @@ const authMiddleware = require("../middleware/auth.middleware");
 const router = express.Router();
 
 router.get("/", authMiddleware, (req, res) => {
-  console.log(req.user);
   return res.status(200).json({
     success: true,
     message: "User loggedin",
