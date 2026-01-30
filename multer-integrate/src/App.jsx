@@ -13,7 +13,6 @@ const App = () => {
 
   const handleSendFile = async () => {
     try {
-      formData.append("image", image);
       let res = await axios.post(
         "http://localhost:3000/api/products/images",
         formData
@@ -30,6 +29,7 @@ const App = () => {
   return (
     <div>
       <h1>hello</h1>
+      <form action=""></form>
 
       <input multiple onChange={(e) => setImage(e.target.files)} type="file" />
       <button onClick={handleSendFile}>Send</button>

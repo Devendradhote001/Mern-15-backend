@@ -1,14 +1,31 @@
+const sendImagesToIK = require("../services/storage.service");
+
 const getAllImagesController = async (req, res) => {
   try {
     let file = req.files;
-    console.log(file);
 
     if (!file)
       return res.status(404).json({
         message: "Files are required",
       });
 
-    // let fileUrl = `http://localhost:3000/${file.path}`;
+    console.log("files->", file);
+
+    // single upload---
+
+    // let singleUpload = await sendImagesToIK(file.buffer, file.originalname);
+
+    // multiple upload---
+
+    let uploadImg = await Promise.all(
+      file.map(
+        async (elem) => await sendImagesToIK(elem.buffer, elem.originalname)
+      )
+    );
+
+    
+
+    console.log("image kit upload ->", uploadImg);
 
     return res.status(200).json({
       message: "ok",
