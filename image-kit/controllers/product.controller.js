@@ -23,8 +23,6 @@ const getAllImagesController = async (req, res) => {
       )
     );
 
-    
-
     console.log("image kit upload ->", uploadImg);
 
     return res.status(200).json({
