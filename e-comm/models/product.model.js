@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-
+  
 const productSchema = new mongoose.Schema(
   {
     productName: {
@@ -15,7 +15,7 @@ const productSchema = new mongoose.Schema(
         required: true,
       },
       currency: {
-        types: String,
+        type: String,
         enum: ["INR", "$"],
         default: "INR",
       },
