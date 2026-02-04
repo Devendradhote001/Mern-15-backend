@@ -1,14 +1,26 @@
 import { ProductModel } from "../models/product.model.js";
 import { UserModel } from "../models/user.model.js";
+import { sendToIK } from "../services/storage.service.js";
 
 export const createProductController = async (req, res) => {
   try {
+    if (!req.files)
+      return res.status(404).json({
+        message: "Images are required",
+      });
+
     let { productName, description, amount, currency } = req.body;
 
     if (!productName || !description || !amount)
       return res.status(400).json({
         message: "All fields are required",
       });
+
+    let imagesArr = await Promise.all(
+      req.files.map(
+        async (elem) => await sendToIK(elem.buffer, elem.originalname)
+      )
+    );
 
     let newProduct = await ProductModel.create({
       productName,
@@ -17,6 +29,7 @@ export const createProductController = async (req, res) => {
         amount,
         currency,
       },
+      images: imagesArr.map((elem) => elem.url),
     });
 
     // let user = await UserModel.findById(req.user._id);

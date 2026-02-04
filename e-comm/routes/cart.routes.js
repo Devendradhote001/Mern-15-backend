@@ -1,11 +1,17 @@
 import express from "express";
-import { addToCartController } from "../controllers/cart.controller.js";
+import {
+  addToCartController,
+  decrementController,
+  deleteProductFromCartController,
+  incrementController,
+} from "../controllers/cart.controller.js";
+import { authMiddleware } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
 
-router.get("/add/:productId/:userId", addToCartController);
-// router.get("/increment/:productId/:cartId");
-// router.get("/decrement/:productId/:cartId");
-// router.delete("/delete/:productId/:cartId");
+router.get("/add/:productId/:userId", authMiddleware, addToCartController);
+router.get("/increment/:productId/:cartId", incrementController);
+router.get("/decrement/:productId/:cartId", decrementController);
+router.delete("/delete/:productId/:cartId", deleteProductFromCartController);
 
 export default router;
