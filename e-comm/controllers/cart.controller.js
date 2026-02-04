@@ -45,3 +45,104 @@ export const addToCartController = async (req, res) => {
     });
   }
 };
+
+export const incrementController = async (req, res) => {
+  try {
+    let { productId, cartId } = req.params;
+
+    if (!productId || !cartId)
+      return res.status(400).json({
+        message: "Id required",
+      });
+
+    let cart = await CartModel.findById(cartId);
+
+    let product = cart.items.find(
+      (elem) => elem.product_id.toString() === productId
+    );
+    product.quantity += 1;
+    await cart.save();
+
+    return res.status(200).json({
+      message: "Product quantity increased",
+      success: true,
+      cart,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Internal server error",
+      success: false,
+      error,
+    });
+  }
+};
+
+export const decrementController = async (req, res) => {
+  try {
+    let { productId, cartId } = req.params;
+
+    if (!productId || !cartId)
+      return res.status(400).json({
+        message: "Id required",
+      });
+
+    let cart = await CartModel.findById(cartId);
+
+    let product = cart.items.find(
+      (elem) => elem.product_id.toString() === productId
+    );
+    if (product) {
+      if (product.quantity === 0)
+        return res.status(400).json({
+          message: "Quantity is 0",
+        });
+      product.quantity -= 1;
+    }
+    await cart.save();
+
+    return res.status(200).json({
+      message: "Product quantity decreased",
+      success: true,
+      cart,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Internal server error",
+      success: false,
+      error,
+    });
+  }
+};
+
+export const deleteProductFromCartController = async (req, res) => {
+  try {
+    let { productId, cartId } = req.params;
+
+    if (!productId || !cartId)
+      return res.status(400).json({
+        message: "Id required",
+      });
+
+    let cart = await CartModel.findById(cartId);
+
+    let updatedCart = cart.items.filter(
+      (elem) => elem.product_id.toString() !== productId
+    );
+
+    cart.items = updatedCart;
+
+    await cart.save();
+
+    return res.status(200).json({
+      message: "Product deleted from cart",
+      success: true,
+      cart,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Internal server error",
+      success: false,
+      error,
+    });
+  }
+};

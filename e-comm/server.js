@@ -7,8 +7,14 @@ import productRoutes from "./routes/product.routes.js";
 import cartRoutes from "./routes/cart.routes.js";
 
 import { connectDB } from "./config/db.js";
+import { authMiddleware } from "./middleware/auth.middleware.js";
 
 const app = express();
+
+// accepting form-data--
+app.use(express.urlencoded({ extended: true }));
+
+
 
 app.use(express.json());
 
@@ -18,7 +24,7 @@ connectDB();
 
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
-app.use("/api/cart", cartRoutes);
+app.use("/api/cart", authMiddleware, cartRoutes);
 
 const port = process.env.PORT || 4000;
 

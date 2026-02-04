@@ -23,7 +23,8 @@ const productSchema = new mongoose.Schema(
     images: [
       {
         type: String,
-        maxlength: 5,
+        
+        required: true,
       },
     ],
     user_id: {
