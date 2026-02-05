@@ -4,8 +4,16 @@ import {
   logoutController,
   registerController,
 } from "../controllers/auth.controller.js";
+import { authMiddleware } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
+
+router.get("/current-user", authMiddleware, (req, res) => {
+  return res.status(200).json({
+    message: "Current user fetched",
+    user: req.user,
+  });
+});
 
 router.post("/register", registerController);
 router.post("/login", loginController);
