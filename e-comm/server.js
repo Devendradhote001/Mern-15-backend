@@ -1,8 +1,10 @@
 import dotenv from "dotenv";
+import cors from "cors";
 import cookieParser from "cookie-parser";
 dotenv.config();
 import express from "express";
 import authRoutes from "./routes/auth.routes.js";
+
 import productRoutes from "./routes/product.routes.js";
 import cartRoutes from "./routes/cart.routes.js";
 
@@ -11,10 +13,15 @@ import { authMiddleware } from "./middleware/auth.middleware.js";
 
 const app = express();
 
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
+
 // accepting form-data--
 app.use(express.urlencoded({ extended: true }));
-
-
 
 app.use(express.json());
 
