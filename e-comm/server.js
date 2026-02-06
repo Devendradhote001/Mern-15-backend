@@ -10,6 +10,7 @@ import cartRoutes from "./routes/cart.routes.js";
 
 import { connectDB } from "./config/db.js";
 import { authMiddleware } from "./middleware/auth.middleware.js";
+import { cacheInstance } from "./services/cache.service.js";
 
 const app = express();
 
@@ -19,6 +20,14 @@ app.use(
     credentials: true,
   })
 );
+
+cacheInstance.on("connect", () => {
+  console.log("Redis connected");
+});
+
+cacheInstance.on("error", (err) => {
+  console.log("Error connecting redis");
+});
 
 // accepting form-data--
 app.use(express.urlencoded({ extended: true }));

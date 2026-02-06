@@ -1,5 +1,6 @@
 import { ProductModel } from "../models/product.model.js";
 import { UserModel } from "../models/user.model.js";
+import { cacheInstance } from "../services/cache.service.js";
 import { sendToIK } from "../services/storage.service.js";
 
 export const createProductController = async (req, res) => {
@@ -44,6 +45,8 @@ export const createProductController = async (req, res) => {
       { new: true }
     );
 
+    await cacheInstance.del("products");
+
     return res.status(201).json({
       success: true,
       message: "Product created",
@@ -61,7 +64,22 @@ export const createProductController = async (req, res) => {
 
 export const getAllProductsController = async (req, res) => {
   try {
+    let pro = await cacheInstance.get("products");
+    let cachedProducts = JSON.parse(pro);
+
+    if (cachedProducts) {
+      return res.status(200).json({
+        message: "Products fetched",
+        success: true,
+        products: cachedProducts,
+      });
+    }
+
+    console.log("mongodb hitted");
+
     let allProducts = await ProductModel.find();
+
+    await cacheInstance.set("products", JSON.stringify(allProducts));
 
     return res.status(200).json({
       message: "Products fetched",
@@ -84,6 +102,21 @@ export const getSingleProductController = async (req, res) => {
       return res.status(404).json({
         message: "Product id not found",
       });
+
+    let pro = await cacheInstance.get("products");
+    let cachedProducts = JSON.parse(pro);
+
+    let isAtCache = cachedProducts.find(
+      (elem) => elem._id.toString() === productId
+    );
+
+    if (isAtCache) {
+      return res.status(200).json({
+        message: "Product fetched",
+        success: true,
+        product: isAtCache,
+      });
+    }
 
     let product = await ProductModel.findById(productId);
 
@@ -133,6 +166,8 @@ export const updateProductController = async (req, res) => {
       { new: true, runValidators: true }
     );
 
+    await cacheInstance.del("products");
+
     return res.status(200).json({
       success: true,
       message: "Product updated",
@@ -172,6 +207,8 @@ export const updateSingleProductValueController = async (req, res) => {
         runValidators: true,
       }
     );
+
+    await cacheInstance.del("products");
 
     return res.status(200).json({
       message: "Product updated",
@@ -214,6 +251,7 @@ export const deleteProductController = async (req, res) => {
       },
       { new: true }
     );
+    await cacheInstance.del("products");
 
     return res.status(200).json({
       message: "Product deleted",
