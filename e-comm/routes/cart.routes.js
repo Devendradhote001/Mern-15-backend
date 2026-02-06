@@ -5,7 +5,6 @@ import {
   deleteProductFromCartController,
   incrementController,
 } from "../controllers/cart.controller.js";
-import { authMiddleware } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
 

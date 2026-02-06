@@ -2,6 +2,7 @@ import { CartModel } from "../models/cart.model.js";
 import { UserModel } from "../models/user.model.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { cacheInstance } from "../services/cache.service.js";
 
 export const registerController = async (req, res) => {
   try {
@@ -103,6 +104,14 @@ export const logoutController = async (req, res) => {
       return res.status(404).json({
         message: "id not found",
       });
+
+    let token = req.cookies.token;
+    if (!token)
+      return res.status(404).json({
+        message: "token not found",
+      });
+
+    await cacheInstance.set(token, 'blacklisted');
 
     res.clearCookie("token");
 
