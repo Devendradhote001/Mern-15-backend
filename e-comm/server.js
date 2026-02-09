@@ -11,6 +11,7 @@ import cartRoutes from "./routes/cart.routes.js";
 import { connectDB } from "./config/db.js";
 import { authMiddleware } from "./middleware/auth.middleware.js";
 import { cacheInstance } from "./services/cache.service.js";
+import { errorMiddleware } from "./middleware/error.middleware.js";
 
 const app = express();
 
@@ -41,6 +42,8 @@ connectDB();
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/cart", authMiddleware, cartRoutes);
+
+app.use(errorMiddleware);
 
 const port = process.env.PORT || 4000;
 
