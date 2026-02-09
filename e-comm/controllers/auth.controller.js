@@ -3,59 +3,50 @@ import { UserModel } from "../models/user.model.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { cacheInstance } from "../services/cache.service.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
+import { CustomError } from "../utils/CustomError.js";
 
-export const registerController = async (req, res) => {
-  try {
-    let { name, email, password, mobile } = req.body;
+export const registerController = asyncHandler(async (req, res) => {
+  let { name, email, password, mobile } = req.body;
 
-    if (!name || !email || !password || !mobile)
-      return res.status(400).json({
-        message: "All fields are required",
-      });
-
-    let isExisted = await UserModel.findOne({ email });
-
-    if (isExisted) {
-      return res.status(400).json({
-        message: "User already exist.",
-      });
-    }
-
-    let hashPass = await bcrypt.hash(password, 10);
-
-    let newUser = await UserModel.create({
-      name,
-      email,
-      mobile,
-      password: hashPass,
-    });
-
-    let userCart = await CartModel.create({
-      user_id: newUser._id,
-    });
-
-    newUser.cart = userCart._id;
-    await newUser.save();
-
-    let token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
-    });
-
-    res.cookie("token", token);
-
-    return res.status(201).json({
-      success: true,
-      message: "User registered",
-      user: newUser,
-    });
-  } catch (error) {
-    console.log("error in reg", error);
-    return res.status(500).json({
-      success: false,
-      message: "Internal server error",
-    });
+  if (!name || !email || !password || !mobile) {
+    throw new CustomError("All fields are required", 300);
   }
-};
+
+  let isExisted = await UserModel.findOne({ email });
+
+  if (isExisted) {
+    throw new CustomError("user already exist", 300);
+  }
+
+  let hashPass = await bcrypt.hash(password, 10);
+
+  let newUser = await UserModel.create({
+    name,
+    email,
+    mobile,
+    password: hashPass,
+  });
+
+  let userCart = await CartModel.create({
+    user_id: newUser._id,
+  });
+
+  newUser.cart = userCart._id;
+  await newUser.save();
+
+  let token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, {
+    expiresIn: "1h",
+  });
+
+  res.cookie("token", token);
+
+  return res.status(201).json({
+    success: true,
+    message: "User registered",
+    user: newUser,
+  });
+});
 
 export const loginController = async (req, res) => {
   try {
@@ -111,7 +102,7 @@ export const logoutController = async (req, res) => {
         message: "token not found",
       });
 
-    await cacheInstance.set(token, 'blacklisted');
+    await cacheInstance.set(token, "blacklisted");
 
     res.clearCookie("token");
 
