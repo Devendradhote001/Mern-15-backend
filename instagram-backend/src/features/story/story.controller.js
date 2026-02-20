@@ -35,9 +35,10 @@ const setViewsController = asyncHandler(async (req, res) => {
 
   let story = await StoryModel.findById(storyId);
 
-  story.viewers.push(req.user._id);
-  await story.save();
-
+  if (!story.viewers.includes(req.user._id)) {
+    story.viewers.push(req.user._id);
+    await story.save();
+  }
   return res.status(200).json({
     message: "Views count increased",
     success: true,

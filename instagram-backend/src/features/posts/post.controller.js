@@ -24,12 +24,21 @@ const createPostController = asyncHandler(async (req, res) => {
 
   let images = uploadArr.filter((elem) => elem.url.slice(-3) !== "mp4");
 
-  let newPost = await PostModel.create({
-    images: images.map((elem) => elem.url),
-    videos: videos.map((elem) => elem.url),
-    caption,
-    user_id: req.user._id,
-  });
+  let newPost;
+
+  if (videos.length) {
+    newPost = await PostModel.create({
+      videos: videos.map((elem) => elem.url),
+      caption,
+      user_id: req.user._id,
+    });
+  } else {
+    newPost = await PostModel.create({
+      images: images.map((elem) => elem.url),
+      caption,
+      user_id: req.user._id,
+    });
+  }
 
   await UserModel.findByIdAndUpdate(req.user._id, {
     $push: { posts: newPost._id },

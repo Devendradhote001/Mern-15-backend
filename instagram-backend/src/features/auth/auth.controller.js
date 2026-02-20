@@ -18,6 +18,7 @@ const registerController = asyncHandler(async (req, res) => {
   let { buffer, originalname } = req.file;
 
   let pp = await sendFilesToIk(buffer, originalname);
+  console.log("profile pic->", pp);
 
   let newUser = await UserModel.create({
     name,
@@ -25,7 +26,7 @@ const registerController = asyncHandler(async (req, res) => {
     email,
     password,
     bio,
-    profile_pic: pp.url,
+    profilePic: pp.url,
   });
 
   let token = newUser.generateJWT();

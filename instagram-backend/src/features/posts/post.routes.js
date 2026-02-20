@@ -18,4 +18,5 @@ router.post(
 router.get("/", authMiddleware, getAllPostController);
 router.get("/:postId", authMiddleware, getSinglePostController);
 
+
 module.exports = router;
