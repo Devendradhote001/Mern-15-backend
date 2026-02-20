@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 
 const authMiddleware = asyncHandler(async (req, res, next) => {
   let token = req.cookies.token;
+  console.log("token-> ", token);
   if (!token) throw new CustomError("Unauthorized user", 400);
 
   let decode = jwt.verify(token, process.env.JWT_SECRET);

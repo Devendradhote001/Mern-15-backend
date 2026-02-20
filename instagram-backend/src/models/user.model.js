@@ -23,7 +23,7 @@ const userSchema = new mongoose.Schema(
       minlength: 6,
       required: true,
     },
-    profile_pic: {
+    profilePic: {
       type: String,
     },
     savePosts: [
@@ -56,7 +56,10 @@ const userSchema = new mongoose.Schema(
     google_id: {
       type: String,
     },
-    provider: "GOOGLE",
+    provider: {
+      type: String,
+      default: "GOOGLE",
+    },
     isPrivate: {
       type: Boolean,
       default: false,
@@ -77,7 +80,7 @@ userSchema.pre("save", async function (next) {
   }
 });
 
-userSchema.methods.generateJWT = async function () {
+userSchema.methods.generateJWT = function () {
   return jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
     expiresIn: "1h",
   });

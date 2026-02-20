@@ -22,6 +22,19 @@ app.use(
   })
 );
 
+app.set("view engine", "ejs");
+app.use(express.static(path.join(__dirname, "views")));
+
+app.use(passport.initialize());
+
+app.use(express.urlencoded({ extended: true }));
+
+app.use(express.json());
+
+app.use(cookieParser());
+
+connectDB();
+
 cacheInstance.on("connect", () => {
   console.log("Redis connected");
 });
@@ -30,14 +43,38 @@ cacheInstance.on("error", (err) => {
   console.log("Error connecting redis");
 });
 
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_SECRET_ID,
+      callbackURL: process.env.GOOGLE_CALLBACK_URL,
+    },
+    (accessToken, refreshToken, profile, cb) => {
+      console.log(profile);
+      return cb(null, profile);
+    }
+  )
+);
+
+app.get("/", (req, res) => {
+  res.render("index.ejs");
+});
+
+app.get(
+  "/google",
+  passport.authenticate("google", { scope: ["profile", "email"] })
+);
+
+app.get(
+  "/callback/google",
+  passport.authenticate("google", { session: false }),
+  (req, res) => {
+    return res.send(req.user);
+  }
+);
+
 // accepting form-data--
-app.use(express.urlencoded({ extended: true }));
-
-app.use(express.json());
-
-app.use(cookieParser());
-
-connectDB();
 
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);

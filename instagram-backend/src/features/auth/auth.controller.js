@@ -25,7 +25,7 @@ const registerController = asyncHandler(async (req, res) => {
     email,
     password,
     bio,
-    profile_pic: pp,
+    profile_pic: pp.url,
   });
 
   let token = newUser.generateJWT();

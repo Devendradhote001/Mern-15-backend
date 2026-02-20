@@ -20,7 +20,7 @@ const storySchema = new mongoose.Schema(
     ],
     expiresAt: {
       type: Date,
-      expires: "24h",
+      index: { expireAfterSeconds: 10 },
     },
   },
   {

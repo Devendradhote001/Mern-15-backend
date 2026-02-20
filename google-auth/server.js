@@ -3,12 +3,16 @@ const express = require("express");
 const passport = require("passport");
 const authRoutes = require("./routes/auth.routes");
 const path = require("path");
+const cookieParser = require("cookie-parser");
 const connectDB = require("./config/db");
 const UserModel = require("./models/user.model");
+const errorMiddleware = require("./middleware/error.middleware");
 
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 
 const app = express();
+
+app.use(cookieParser());
 
 connectDB();
 
@@ -59,6 +63,8 @@ app.use("/api/auth", authRoutes);
 app.get("/", (req, res) => {
   res.render("index.ejs");
 });
+
+app.use(errorMiddleware);
 
 app.listen(3000, () => {
   console.log("server is running on port 3000");
