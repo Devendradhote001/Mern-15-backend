@@ -3,6 +3,9 @@ const {
   registerController,
   loginController,
   logoutController,
+  forgetPasswordController,
+  resetPasswordController,
+  updatePasswordController,
 } = require("./auth.controller");
 const authMiddleware = require("../../middlewares/auth.middleware");
 const upload = require("../../config/multer");
@@ -14,6 +17,10 @@ router.get(
   "/google",
   passport.authenticate("google", { scope: ["profile", "email"] })
 );
+
+router.post("/forget-password", forgetPasswordController);
+router.get("/reset-password/:token", resetPasswordController);
+router.post("/update-password/:userId", updatePasswordController);
 
 router.get(
   "/callback/google",

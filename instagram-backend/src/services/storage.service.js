@@ -1,8 +1,8 @@
 const Imagekit = require("imagekit");
 
 const storageInstance = new Imagekit({
-  publicKey: process.env.IK_PUB_KEY,
-  privateKey: process.env.IK_PRI_KEY,
+  publicKey: process.env.IK_PUBLIC_KEY,
+  privateKey: process.env.IK_PRIVATE_KEY,
   urlEndpoint: process.env.IK_URL,
 });
 

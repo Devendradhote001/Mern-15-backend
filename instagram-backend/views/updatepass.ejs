@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <main>
+      <h1>User id -> <%= user_id %></h1>
+
+      <form action="/api/auth/update-password/<%=user_id%>" method="POST">
+        <label for="">New password</label>
+        <input type="text" name="password" placeholder="new pass" /> <br />
+        <label for="">Confirm password</label>
+        <input type="text" placeholder="confirm pass" />
+        <button>Update</button>
+      </form>
+    </main>
+  </body>
+</html>

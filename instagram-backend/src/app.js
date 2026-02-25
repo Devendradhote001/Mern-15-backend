@@ -13,6 +13,9 @@ var GoogleStrategy = require("passport-google-oauth20").Strategy;
 
 const app = express();
 
+app.set("view engine", "ejs");
+app.use(express.static(path.join(__dirname, "/views")));
+
 app.use(passport.initialize());
 
 app.use(express.json());
@@ -21,7 +24,11 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 app.get("/", (req, res) => {
-  return res.send("ok");
+  return res.render("index");
+});
+
+app.get("/getemail", (req, res) => {
+  return res.render("email");
 });
 
 passport.use(
